@@ -4,7 +4,7 @@ version: 2.1
 jobs:
   build-and-lint: 
     docker:
-      - image: amazon/aws-cli:latest
+      - image: python:3.7.3-stretch
     working_directory: ~/repo
     steps:
       - checkout
@@ -35,7 +35,7 @@ jobs:
 
   run-docker: 
     docker:
-      - image: amazon/aws-cli:latest
+      - image: amazon/aws-cli	
     working_directory: ~/repo
     steps:
       - checkout
@@ -46,7 +46,7 @@ jobs:
   
   upload-docker-container: 
     docker:
-      - image: amazon/aws-cli:latest
+      - image: amazon/aws-cli	
     working_directory: ~/repo
     steps:
       - checkout
@@ -55,7 +55,7 @@ jobs:
           command: |
               ./upload_docker.sh
 
-
+              
 workflows:
   default:
      jobs:
