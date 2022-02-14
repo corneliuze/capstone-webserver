@@ -35,7 +35,7 @@ jobs:
 
   run-docker: 
     docker:
-      - image: amazon/aws-cli	
+      - image: docker:20.10.12-alpine3.15
     working_directory: ~/repo
     steps:
       - checkout
