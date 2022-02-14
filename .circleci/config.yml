@@ -45,7 +45,7 @@ jobs:
                yum update -y
                amazon-linux-extras install docker
                service docker start
-              ./run_docker.sh
+               ./run_docker.sh
       - run:
           name: build docker
           command: |
