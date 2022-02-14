@@ -1,9 +1,13 @@
 FROM python:3.8
-LABEL maintainer="Udacity"
 
-COPY . /app
 WORKDIR /app
+
+COPY . app.py /app/
+
 RUN pip install -r requirements.txt
+
+# expose the container
+EXPOSE 80
 
 # command to run on container start
 CMD [ "python", "app.py" ]
