@@ -35,10 +35,17 @@ jobs:
 
   run-docker: 
     docker:
-      - image: docker:20.10.12-alpine3.15
+      - image: amazon/aws-cli	
     working_directory: ~/repo
     steps:
       - checkout
+      - run:
+          name: install docker
+          command: |
+              sudo yum update -y
+              sudo amazon-linux-extras install docker
+              sudo service docker start
+              ./run_docker.sh
       - run:
           name: build docker
           command: |
