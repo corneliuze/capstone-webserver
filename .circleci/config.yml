@@ -35,21 +35,27 @@ jobs:
 
   run-docker: 
     docker:
-      - image: ubuntu:18.04
+      - image: python:3.7.3-stretch
     working_directory: ~/repo
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 19.03.13
       - run:
-          name: install docker
+          name: build Docker Container 
           command: |
-               yum update -y
-               amazon-linux-extras install docker
-               service docker start
-               ./run_docker.sh
+              docker build --tag=api  .
+              docker images
       - run:
-          name: build docker
+          name: upload docker conatainer
           command: |
-              ./run_docker.sh
+             docker login --username="$DOCKER_USERNAME" --password="$DOCKER_PASSWORD"
+             docker tag hello-app $DOCKER_PATH:$CIRCLE_WORKFLOW_ID
+             echo "Docker ID and Image: $DOCKER_PATH"
+             docker push $DOCKER_PATH:$CIRCLE_WORKFLOW_ID
+
+
+      
   
   upload-docker-container: 
     docker:
