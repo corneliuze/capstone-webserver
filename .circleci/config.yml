@@ -44,7 +44,7 @@ jobs:
       - run:
           name: build Docker Container 
           command: |
-              docker build --tag=api  .
+              docker build --tag=hello-app  .
               docker images
       - run:
           name: upload docker conatainer
