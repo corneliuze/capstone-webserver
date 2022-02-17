@@ -1,6 +1,10 @@
 version: 2.1
 
 
+orbs:
+  aws-eks: circleci/aws-eks@1.0.0
+  kubernetes: circleci/kubernetes@0.11.1
+
 jobs:
   build-and-lint: 
     docker:
@@ -54,22 +58,124 @@ jobs:
              echo "Docker ID and Image: $DOCKER_PATH"
              docker push $DOCKER_PATH:$CIRCLE_WORKFLOW_ID
 
-
-      
-  
-  upload-docker-container: 
-    docker:
-      - image: amazon/aws-cli	
-    working_directory: ~/repo
+  create-cluster:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          capstone-udacity
+        type: string
     steps:
       - checkout
       - run:
-          name: push docker conatainer
+          name: Inatall eksctl
           command: |
-              ./upload_docker.sh
+            if which eksctl > /dev/null; then
+            echo "eksctl is already installed"
+            exit 0
+            fi
+
+            mkdir -p eksctl_download
+            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C eksctl_download
+            ls -lrt
+            pwd  
+            chmod +x eksctl_download/eksctl 
+            SUDO=""
+            if [ $(id -u) -ne 0 ] && which sudo > /dev/null ; then
+                SUDO="sudo"
+            fi
+            $SUDO mv eksctl_download/eksctl /usr/local/bin/
+            rmdir eksctl_download
+      - aws-eks/install-aws-iam-authenticator:
+            release-tag: ''
+      - aws-eks/create-cluster:
+            cluster-name: << parameters.cluster-name >>
+            skip-kubectl-install: false
+            verbose: 3
+            node-type: t2.small
+            nodes-max: 2
+            ssh-access: false
+            ssh-public-key: 'capstone' 
+
+  # deploy-application:
+  #     executor: aws-eks/python3
+  #     parameters:
+  #       cluster-name:
+  #         description: |
+  #           capstone-udacity
+  #         type: string
+  #       aws-region:
+  #         description: |
+  #           AWS region
+  #         type: string
+  #         default: "$AWS_DEFAULT_REGION"
+  #     steps:
+  #     - checkout
+  #     - kubernetes/install
+  #     - aws-eks/update-kubeconfig-with-authenticator:
+  #         cluster-name: << parameters.cluster-name >>
+  #         install-kubectl: true
+  #     - kubernetes/create-or-update-resource:
+  #         get-rollout-status: true
+  #         resource-file-path: deployment.yml
+  #         resource-name: deployment/capstone-udacity
+          
+  # test-application:
+  #   executor: aws-eks/python3
+  #   parameters:
+  #     cluster-name:
+  #       description: |
+  #         capstone-udacity
+  #       type: string
+  #     aws-region:
+  #       description: |
+  #         AWS region
+  #       type: string
+  #       default: "$AWS_DEFAULT_REGION"  
+  #   steps:
+  #     - aws-eks/update-kubeconfig-with-authenticator:
+  #         cluster-name: << parameters.cluster-name >>
+  #         install-kubectl: true
+  #         aws-region: "$AWS_DEFAULT_REGION" 
+  #     - run:
+  #         name: Wait for service to be ready
+  #         command: |
+  #           kubectl get pods
+  #           kubectl get services
+  #           kubectl describe pods
+
+
+  
+    
+
 
               
 workflows:
   default:
      jobs:
+      - lint
       - run-docker
+        requires:
+            - "lint"
+      - create-cluster
+          cluster-name: udacity-capstone
+         requires:
+            - "run-docker"
+      # - deploy-application
+      #     requires:
+      #       - "create-cluster"
+      # - aws-eks/update-container-image:
+      #     cluster-name: udacity-capstone
+      #     container-image-updates: 'andyd1997=udacity-capstone:latest'
+      #     post-steps:
+      #       - kubernetes/delete-resource:
+      #           resource-names: udacity-capstone
+      #           resource-types: deployment
+      #           wait: true
+      #     record: true
+      #     requires:
+      #       - deploy-application
+      #     resource-name: deployment/capstone-udacity
+      # - test-application
+      #     requires:
+      #       - "deploy-application"
