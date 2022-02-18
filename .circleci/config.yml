@@ -54,9 +54,9 @@ jobs:
           name: upload docker conatainer
           command: |
              docker login --username="$DOCKER_USERNAME" --password="$DOCKER_PASSWORD"
-             docker tag hello-app $DOCKER_PATH:$CIRCLE_WORKFLOW_ID
+             docker tag hello-app $DOCKER_PATH
              echo "Docker ID and Image: $DOCKER_PATH"
-             docker push $DOCKER_PATH:$CIRCLE_WORKFLOW_ID
+             docker push $DOCKER_PATH
 
   create-cluster:
     executor: aws-eks/python3
@@ -97,28 +97,28 @@ jobs:
             ssh-access: false
             ssh-public-key: 'capstone' 
 
-  deploy-application:
-      executor: aws-eks/python3
-      parameters:
-        cluster-name:
-          description: |
-            capstone-udacity
-          type: string
-        aws-region:
-          description: |
-            AWS region
-          type: string
-          default: "$AWS_DEFAULT_REGION"
-      steps:
-      - checkout
-      - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: << parameters.cluster-name >>
-          install-kubectl: true
-          aws-region: "$AWS_DEFAULT_REGION" 
-      - kubernetes/create-or-update-resource:
-          get-rollout-status: true
-          resource-file-path: deployment.yml
-          resource-name: deployment/capstone-udacity
+  # deploy-application:
+  #     executor: aws-eks/python3
+  #     parameters:
+  #       cluster-name:
+  #         description: |
+  #           capstone-udacity
+  #         type: string
+  #       aws-region:
+  #         description: |
+  #           AWS region
+  #         type: string
+  #         default: "$AWS_DEFAULT_REGION"
+  #     steps:
+  #     - checkout
+  #     - aws-eks/update-kubeconfig-with-authenticator:
+  #         cluster-name: << parameters.cluster-name >>
+  #         install-kubectl: true
+  #         aws-region: "$AWS_DEFAULT_REGION" 
+  #     - kubernetes/create-or-update-resource:
+  #         get-rollout-status: true
+  #         resource-file-path: deployment.yml
+  #         resource-name: deployment/capstone-udacity
           
   test-application:
     executor: aws-eks/python3
@@ -159,18 +159,18 @@ workflows:
         - create-cluster:
             cluster-name: udacity-capstone
             requires: [run-docker]
-        - deploy-application:
-            cluster-name: udacity-capstone
-            requires:
-              - "create-cluster"
-        - aws-eks/update-container-image:
-            cluster-name: udacity-capstone
-            container-image-updates: 'falay=falay/api:latest'
-            record: true
-            requires:
-              - deploy-application
-            resource-name: deployment/capstone-udacity
+        # - deploy-application:
+        #     cluster-name: udacity-capstone
+        #     requires:
+        #       - "create-cluster"
+        # - aws-eks/update-container-image:
+        #     cluster-name: udacity-capstone
+        #     container-image-updates: 'falay=falay/api'
+        #     record: true
+        #     requires:
+        #       - deploy-application
+        #     resource-name: deployment/capstone-udacity
         - test-application:
             cluster-name: udacity-capstone
             requires:
-              - "deploy-application"
+              - "create-cluster"
