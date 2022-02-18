@@ -24,7 +24,7 @@ spec:
         emptyDir: {}
       containers:
       - name: capstone-udacity
-        image: falay/api
+        image: falay/api:latest
         resources:
         ports:
         - name: http
