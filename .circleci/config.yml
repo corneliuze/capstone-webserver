@@ -98,28 +98,28 @@ jobs:
             ssh-access: false
             ssh-public-key: '' 
 
-  # deploy-application:
-  #     executor: aws-eks/python3
-  #     parameters:
-  #       cluster-name:
-  #         description: |
-  #           capstone-udacity
-  #         type: string
-  #       aws-region:
-  #         description: |
-  #           AWS region
-  #         type: string
-  #         default: "$AWS_DEFAULT_REGION"
-  #     steps:
-  #     - checkout
-  #     - aws-eks/update-kubeconfig-with-authenticator:
-  #         cluster-name: << parameters.cluster-name >>
-  #         install-kubectl: true
-  #         aws-region: "$AWS_DEFAULT_REGION" 
-  #     - kubernetes/create-or-update-resource:
-  #         get-rollout-status: true
-  #         resource-file-path: deployment.yml
-  #         resource-name: deployment/capstone-udacity
+  deploy-application:
+      executor: aws-eks/python3
+      parameters:
+        cluster-name:
+          description: |
+            capstone-udacity
+          type: string
+        aws-region:
+          description: |
+            AWS region
+          type: string
+          default: "$AWS_DEFAULT_REGION"
+      steps:
+      - checkout
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
+          install-kubectl: true
+          aws-region: "$AWS_DEFAULT_REGION" 
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: deployment.yml
+          resource-name: deployment/capstone-udacity
           
   test-application:
     executor: aws-eks/python3
@@ -144,7 +144,7 @@ jobs:
             kubectl get services
             kubectl get nodes 
             kubectl get pods
-            kebectl get deployment
+            kubectl get deployment
 
 
   
@@ -161,17 +161,17 @@ workflows:
         - create-cluster:
             cluster-name: udacity-capstone
             requires: [run-docker]
-        # - deploy-application:
-        #     cluster-name: udacity-capstone
-        #     requires:
-        #       - "create-cluster"
-        # - aws-eks/update-container-image:
-        #     cluster-name: udacity-capstone
-        #     container-image-updates: 'falay=falay/api'
-        #     record: true
-        #     requires:
-        #       - deploy-application
-        #     resource-name: deployment/capstone-udacity
+        - deploy-application:
+            cluster-name: udacity-capstone
+            requires:
+              - "create-cluster"
+        - aws-eks/update-container-image:
+            cluster-name: udacity-capstone
+            container-image-updates: 'falay=falay/api:v1.0'
+            record: true
+            requires:
+              - deploy-application
+            resource-name: deployment/capstone-udacity
 
         - test-application:
             cluster-name: udacity-capstone
