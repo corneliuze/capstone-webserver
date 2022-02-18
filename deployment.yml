@@ -28,9 +28,9 @@ spec:
         resources:
         ports:
         - name: http
-        - containerPort: 80
+          containerPort: 80
         imagePullPolicy: "Always"
-    nodeSelector:
+      nodeSelector:
         kubernetes.io/os: linux
 
 ---
