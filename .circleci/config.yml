@@ -172,5 +172,6 @@ workflows:
               - deploy-application
             resource-name: deployment/capstone-udacity
         - test-application:
+            cluster-name: udacity-capstone
             requires:
               - "deploy-application"
