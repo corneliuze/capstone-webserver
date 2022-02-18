@@ -1,30 +1,44 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: udacity-capstone
+  name: capstone-udacity
   labels:
-    app: udacity-capstone
+    app: capstone-udacity
 spec:
   selector:
     matchLabels:
-      app: udacity-capstone
+      app: capstone-udacity
   replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
-      maxUnavailable: 1
+      maxUnavailable: 50%
   template:
     metadata:
       labels:
-        app: raghucapstoneprj
+        app: capstone-udacity
     spec:
       containers:
-      - name: raghucapstoneprj
-        image: sraghuraman27/raghucapstoneprj
+      - name: capstone-udacity
+        image: falay/api
         resources:
           requests:
             cpu: 100m
             memory: 100Mi
         ports:
         - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: capstone-udacity
+spec:
+  selector:
+    app: capstone-udacity
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 80
