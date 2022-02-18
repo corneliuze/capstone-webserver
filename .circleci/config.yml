@@ -171,6 +171,6 @@ workflows:
             requires:
               - deploy-application
             resource-name: deployment/capstone-udacity
-        - test-application
+        - test-application:
             requires:
               - "deploy-application"
