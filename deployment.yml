@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: capstone-udacity-deployment
+  name: capstone-udacity
   labels:
     app: capstone-udacity
 spec:
@@ -34,7 +34,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: capstone-udacity-service
+  name: capstone-udacity
 spec:
   selector:
     app: capstone-udacity
