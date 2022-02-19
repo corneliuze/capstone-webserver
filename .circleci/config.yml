@@ -155,8 +155,9 @@ jobs:
 workflows:
   default:
      jobs:
-        - run-docker
-            # requires: [build-and-lint]
+        - build-and-lint
+        - run-docker:
+            requires: [build-and-lint]
         - create-cluster:
             cluster-name: udacity-capstone
             requires: [run-docker]
