@@ -56,7 +56,7 @@ jobs:
              docker login --username="$DOCKER_USERNAME" --password="$DOCKER_PASSWORD"
              docker tag hello-app $DOCKER_PATH
              echo "Docker ID and Image: $DOCKER_PATH"
-             docker push $DOCKER_PATH
+             docker push $DOCKER_PATH:v1.0
 
   create-cluster:
     executor: aws-eks/python3
@@ -165,15 +165,14 @@ workflows:
             cluster-name: udacity-capstone
             requires:
               - "create-cluster"
-        - aws-eks/update-container-image:
-            cluster-name: udacity-capstone
-            container-image-updates: 'falay=falay/api:v1.0'
-            record: true
-            requires:
-              - deploy-application
-            resource-name: deployment/capstone-udacity
-
         - test-application:
             cluster-name: udacity-capstone
             requires:
-              - "create-cluster"
+              - "deploy-application"
+        # - aws-eks/update-container-image:
+        #     cluster-name: udacity-capstone
+        #     container-image-updates: 'falay=falay/api:v1.0'
+        #     record: true
+        #     requires:
+        #       - deploy-application
+        #     resource-name: deployment/capstone-udacity

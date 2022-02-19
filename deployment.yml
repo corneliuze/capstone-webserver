@@ -1,27 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: capstone-udacity
+  name: capstone-udacity-deployment
   labels:
     app: capstone-udacity
 spec:
   selector:
     matchLabels:
       app: capstone-udacity
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
-      maxUnavailable: 50%
+      maxUnavailable: 1
   template:
     metadata:
       labels:
         app: capstone-udacity
     spec:
-      volumes:
-      - name: uploads
-        emptyDir: {}
       containers:
       - name: capstone-udacity
         image: falay/api:latest
@@ -37,7 +34,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: capstone-udacity
+  name: capstone-udacity-service
 spec:
   selector:
     app: capstone-udacity
