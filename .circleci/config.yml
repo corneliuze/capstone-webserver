@@ -117,7 +117,7 @@ jobs:
           install-kubectl: true
           aws-region: "$AWS_DEFAULT_REGION" 
       - kubernetes/create-or-update-resource:
-          get-rollout-status: true
+          # get-rollout-status: true
           resource-file-path: deployment.yml
           resource-name: deployment/capstone-udacity
           
