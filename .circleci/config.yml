@@ -170,12 +170,10 @@ workflows:
             requires: [run-docker]
         - deploy-application:
             cluster-name: udacity-capstone
-            requires:
-              - "create-cluster"
+            requires: [create-cluster]
         - test-application:
             cluster-name: udacity-capstone
-            requires:
-              - "deploy-application"
+            requires: [deploy-application]
         # - aws-eks/update-container-image:
         #     cluster-name: udacity-capstone
         #     container-image-updates: 'falay=falay/api:v1.0'
@@ -187,5 +185,4 @@ workflows:
             cluster-name: udacity-capstone
             aws-region: $AWS_DEFAULT_REGION
             wait: true
-            requires:
-              - "test-application"
+            requires: [test-application]
