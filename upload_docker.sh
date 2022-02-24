@@ -11,3 +11,15 @@ echo "Docker ID and Image: $dockerpath"
 # Step 3:
 # Push image to a docker repository
 docker push $dockerpath
+
+
+
+
+   
+     # - aws-eks/update-container-image:
+        #     cluster-name: udacity-capstone
+        #     container-image-updates: 'falay=falay/api:v1.0'
+        #     record: true
+        #     requires:
+        #       - deploy-application
+        #     resource-name: deployment/capstone-udacity

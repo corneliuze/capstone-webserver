@@ -174,15 +174,7 @@ workflows:
         - test-application:
             cluster-name: udacity-capstone
             requires: [deploy-application]
-        # - aws-eks/update-container-image:
-        #     cluster-name: udacity-capstone
-        #     container-image-updates: 'falay=falay/api:v1.0'
-        #     record: true
-        #     requires:
-        #       - deploy-application
-        #     resource-name: deployment/capstone-udacity
         - aws-eks/delete-cluster:
             cluster-name: udacity-capstone
-            aws-region: $AWS_DEFAULT_REGION
             wait: true
             requires: [test-application]
