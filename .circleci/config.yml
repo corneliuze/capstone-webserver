@@ -143,21 +143,21 @@ jobs:
       - run:
           name: Wait for service to be ready
           command: |
-            kubectl get pods
-            kubectl get services
-            for attempt in {1..20}; do
-              EXTERNAL_IP=$(kubectl get service demoapp | awk '{print $4}' | tail -n1)
-              echo "Checking external IP: ${EXTERNAL_IP}"
-              if [ -n "${EXTERNAL_IP}" ] && [ -z $(echo "${EXTERNAL_IP}" | grep "pending") ]; then
-                break
-              fi
-              echo "Waiting for external IP to be ready: ${EXTERNAL_IP}"
-              sleep 10
-            done
-            sleep 180
-            curl -s --retry 10 "http://$EXTERNAL_IP" | grep "<< parameters.expected-version-info >>"
-            kubectl get nodes 
-            kubectl get deployment
+                kubectl get pods
+                kubectl get services
+                # for attempt in {1..20}; do
+                #   EXTERNAL_IP=$(kubectl get service demoapp | awk '{print $4}' | tail -n1)
+                #   echo "Checking external IP: ${EXTERNAL_IP}"
+                #   if [ -n "${EXTERNAL_IP}" ] && [ -z $(echo "${EXTERNAL_IP}" | grep "pending") ]; then
+                #     break
+                #   fi
+                #   echo "Waiting for external IP to be ready: ${EXTERNAL_IP}"
+                #   sleep 10
+                # done
+                # sleep 180
+                # curl -s --retry 10 "http://$EXTERNAL_IP" | grep "<< parameters.expected-version-info >>"
+                # kubectl get nodes 
+                # kubectl get deployment
 
 workflows:
   default:
