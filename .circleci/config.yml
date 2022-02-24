@@ -188,4 +188,4 @@ workflows:
             aws-region: $AWS_DEFAULT_REGION
             wait: true
             requires:
-              - test-application
+              - "test-application"
