@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: capstone-udacity
+  labels:
+    app: capstone-udacity
+spec:
+  selector:
+    matchLabels:
+      app: capstone-udacity
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: capstone-udacity
+    spec:
+      containers:
+      - name: capstone-udacity
+        image: falay/api:latest
+        resources:
+        ports:
+        - name: http
+          containerPort: 80
+        imagePullPolicy: "Always"
+      nodeSelector:
+        kubernetes.io/os: linux
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: capstone-udacity
+spec:
+  selector:
+    app: capstone-udacity
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 80
